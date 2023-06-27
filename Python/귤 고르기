@@ -1,0 +1,17 @@
+def solution(k, tangerine):
+    answer = 0
+    sizeOfNumber = [0 for i in range(10000001)]
+    for item in tangerine:
+        sizeOfNumber[item] = sizeOfNumber[item] + 1
+        
+    sizeOfNumber.sort(reverse=True)
+    
+    cnt = 0
+    for item in sizeOfNumber:
+        if k <= 0:
+            answer = cnt
+            break;
+        else:
+            cnt = cnt + 1
+            k = k - item
+    return answer
