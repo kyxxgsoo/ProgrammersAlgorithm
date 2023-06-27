@@ -1,0 +1,21 @@
+def solution(s):
+    answer = -1
+    
+    stack = []
+
+    for i in range(len(s)):
+        if not stack:
+            stack.append(s[i])
+        else:
+            if stack[-1] != s[i]:
+                stack.append(s[i])
+            else:
+                stack.pop()
+    
+    if not stack:
+        answer = 1
+    else:
+        answer = 0
+        
+
+    return answer
