@@ -1,0 +1,19 @@
+def solution(brown, yellow):
+    answer = []
+    yPair = []
+    for i in range(1, yellow + 1):
+        q = yellow // i
+        
+        if i > q:
+            break
+            
+        if yellow % i == 0:
+            yPair.append([q, i])
+    
+    total = brown + yellow
+            
+    for i in yPair:
+        if total == (i[0] + 2) * (i[1] + 2):
+            answer = [(i[0] + 2), (i[1] + 2)]
+            break
+    return answer
