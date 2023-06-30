@@ -1,0 +1,14 @@
+def solution(elements):
+    answer = 0
+    elementsDouble = elements * 2
+    numberSet = set()
+    
+    for i in range(len(elements)):
+        for j in range(len(elements)):
+            # sum을 아래처럼 매번 계산안하고, DP처럼 원소 하나씩만 더해가면서 풀면 더 빠름
+            numberSet.add(sum(elementsDouble[j:i + j + 1]))
+    
+    # print(numberSet)
+    answer = len(numberSet)
+    
+    return answer
