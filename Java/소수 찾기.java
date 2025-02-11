@@ -2,87 +2,80 @@ import java.util.*;
 
 class Solution {
 
-    private int answer;
-    private boolean[] isPrime;
-    private HashSet<Integer> numbersComb;
-    private boolean[] isVisited;
-    private StringBuilder tempSb;
+    boolean[] isPrime;
+    HashSet<Integer> hs;
+    StringBuilder sb;
+    boolean[] isVisited;
+    int maxNumber = 0;
 
-    private void init(int maxNum, String numbers) {
-        answer = 0;
-        isPrime = new boolean[maxNum + 1];
+    private void init(String numbers) {
+        isPrime = new boolean[maxNumber + 1];
         Arrays.fill(isPrime, true);
         isPrime[0] = false;
         isPrime[1] = false;
-        numbersComb = new HashSet<>();
+        hs = new HashSet<>();
+        sb = new StringBuilder();
         isVisited = new boolean[numbers.length()];
-        tempSb = new StringBuilder();
-
     }
 
-    private void getCombination(StringBuilder sb, String numbers) {
-        if (sb.length() > 0) {
-            // 현재까지 조합한 숫자
-            int num = Integer.parseInt(sb.toString());
+    // numbers로 만들 수 있는 최댓값 반환 메서드
+    private void getMaxNumber(String numbers) {
+        char[] cArr = numbers.toCharArray();
+        Arrays.sort(cArr);
+        String tempStr = new String(cArr);
+        StringBuilder sb = new StringBuilder(tempStr);
+        sb.reverse();
 
-            // 모든 숫자 조합을 numbersComb에 저장
-            if (!numbersComb.contains(num)) {
-                numbersComb.add(num);
-            }
-        }
-
-        for (int i = 0; i < numbers.length(); i++) {
-            // 이미 방문한 numbers이면 방문 X
-            if (!isVisited[i]) {
-                // 글자 하나 추가
-                sb.append(numbers.charAt(i));
-                isVisited[i] = true;
-                getCombination(sb, numbers);
-                // 글자 하나 삭제
-                isVisited[i] = false;
-                sb.deleteCharAt(sb.length() - 1);
-            }
-        }
-
-
+        maxNumber = Integer.parseInt(sb.toString());
     }
 
-    private void getPrime(int n) {
-        // 에라토스테네스의 체(제곱근까지 반복하며 i의 배수를 모두 primeNum에서 제외)
-        int sqrtNum = (int) Math.sqrt(n);
+    // 에라토스테네스의 체
+    private void getPrimeNumber() {
+        int sqrtNum = (int) (Math.sqrt(maxNumber));
         for (int i = 2; i <= sqrtNum; i++) {
+            // 만약 소수이면, i의 배수를 maxNumber까지 반복하며 소수가 아님을 판별한다.
+            // (이 때, i * i 이전의 소수들은 i보다 작은 소수가 i의 배수를 모두 지웠기 때문에 i * i부터 시작해야 함.) -> 에라토스테네스의 체
             if (isPrime[i]) {
-                for (int j = i * i; j <= n; j += i) {
+                for (int j = i * i; j <= maxNumber; j += i) {
                     isPrime[j] = false;
                 }
             }
         }
     }
 
-    public int solution(String numbers) {
-        int answer = 0;
-
-        // StringBuilder 내림차순 정렬 -> 무조건 StringBuilder를 사용할 것
-        char[] charArr = numbers.toCharArray();
-        Arrays.sort(charArr);
-        StringBuilder sb = new StringBuilder();
-        for (char c: charArr) {
-            sb.append(c);
-        }
-        sb.reverse();
-        int maxNum = Integer.parseInt(sb.toString());
-        // ---
-
-        init(maxNum, numbers);
-        getPrime(maxNum);
-        getCombination(tempSb, numbers);
-
-        for (int i: numbersComb) {
-            if (isPrime[i]) {
-                answer++;
+    private void dfs(String numbers) {
+        if (sb.length() > 0) {
+            int number = Integer.parseInt(sb.toString());
+            if (!hs.contains(number)) {
+                if (isPrime[number]) {
+                    System.out.println(number);
+                    hs.add(number);
+                }
             }
         }
 
-        return answer;
+        for (int i = 0; i < numbers.length(); i++) {
+            char numberChar = numbers.charAt(i);
+            // numbers에서 number이 방문되지 않았다면 dfs
+            if (!isVisited[i]) {
+                sb.append(numberChar);
+                isVisited[i] = true;
+                dfs(numbers);
+                sb.deleteCharAt(sb.length() - 1);
+                isVisited[i] = false;
+            }
+        }
+
+    }
+
+    public int solution(String numbers) {
+        int answer = 0;
+        getMaxNumber(numbers);
+        init(numbers);
+        getPrimeNumber();
+        dfs(numbers);
+
+
+        return hs.size();
     }
 }
